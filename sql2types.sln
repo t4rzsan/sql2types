@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32414.318
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "sql2types", "sql2types.fsproj", "{E3712C25-A0E8-429D-AF35-31301A1CF999}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3712C25-A0E8-429D-AF35-31301A1CF999}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3712C25-A0E8-429D-AF35-31301A1CF999}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3712C25-A0E8-429D-AF35-31301A1CF999}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3712C25-A0E8-429D-AF35-31301A1CF999}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9155AE2D-E8A8-4DAC-8601-8CEA152BA3CE}
+	EndGlobalSection
+EndGlobal
