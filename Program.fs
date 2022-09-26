@@ -1,4 +1,5 @@
 ﻿open Microsoft.Data.SqlClient
+open System
 open System.Data
 
 let getSqlSchema connectionString (tableName: string) =
@@ -11,6 +12,12 @@ let getSqlSchema connectionString (tableName: string) =
     schemaColumns
 
 let schemaColumns = getSqlSchema "Integrated Security=SSPI;Initial Catalog=FSharpForActuaries;Data Source=RODI\SQLEXPRESS;Trust Server Certificate=True;" "TestTable"
+
+let mapTypeToFSharpType (dataType: Type) =
+    if dataType = typeof<string> then
+        "string"
+    else
+        "?"
 
 for column in schemaColumns do
     printfn $"{column.ColumnName}, {column.ColumnSize}, {column.DataTypeName}, {column.DataType}, {column.AllowDBNull}"
