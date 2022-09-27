@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "sql2types": {
+      "commandName": "Project",
+      "commandLineArgs": "--output \"c:\\temp\\Test.fs\""
+    }
+  }
+}
