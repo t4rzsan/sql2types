@@ -78,7 +78,8 @@ let outputFSharp connectionString (schemaName: string) (tableName: string) (writ
 
     let schemaColumnsWithoutLastElement = schemaColumns[.. schemaColumns.Length - 2]
 
-    // Compose one big function to write all properties (except the last one).
+    // Compose one big function to write all properties (except the last one)
+    // which we handle separately below because of the closing curly brace.
     let writeProperties =
         schemaColumnsWithoutLastElement
         |> Seq.fold
@@ -91,6 +92,7 @@ let outputFSharp connectionString (schemaName: string) (tableName: string) (writ
 
     writer
     |> writeProperties
+    // Add last property with closing curly brace.
     |> writeProperty (Array.last schemaColumns)
     |> writeTypeClosing
 
