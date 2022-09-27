@@ -52,9 +52,9 @@ let writeTypeOpening typeName (writer: TextWriter) =
     writer.Write("{ ")
     writer
 
-let writeClosingCurlyBrace (writer: TextWriter) = writer.WriteLine(" }")
+let writeTypeClosing (writer: TextWriter) = writer.WriteLine(" }")
 
-let mapTypeToFSharpType dataType =
+let mapTypeToString dataType =
     match dataType with
     | x when x = typeof<string> -> "string"
     | x when x = typeof<int> -> "int"
@@ -66,7 +66,7 @@ let mapTypeToFSharpType dataType =
     | _ -> dataType.ToString()
 
 let writeProperty schemaColumn (writer: TextWriter) =
-    writer.Write($"{schemaColumn.Name}: {schemaColumn.DataType |> mapTypeToFSharpType}")
+    writer.Write($"{schemaColumn.Name}: {schemaColumn.DataType |> mapTypeToString}")
     writer
 
 let writeLine (writer: TextWriter) =
@@ -78,6 +78,7 @@ let outputFSharp connectionString (schemaName: string) (tableName: string) (writ
 
     let schemaColumnsWithoutLastElement = schemaColumns[.. schemaColumns.Length - 2]
 
+    // Compose one big function to write all properties (except the last one).
     let writeProperties =
         schemaColumnsWithoutLastElement
         |> Seq.fold
@@ -91,7 +92,7 @@ let outputFSharp connectionString (schemaName: string) (tableName: string) (writ
     writer
     |> writeProperties
     |> writeProperty (Array.last schemaColumns)
-    |> writeClosingCurlyBrace
+    |> writeTypeClosing
 
 [<EntryPoint>]
 let main args =
