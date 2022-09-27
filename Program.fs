@@ -1,16 +1,32 @@
-﻿open Microsoft.Data.SqlClient
+﻿open CommandLine
+
+open Microsoft.Data.SqlClient
 open System
 open System.Data
 open System.IO
+open System.Text
+open CommandLine.Text
+
+type CommandLineOptions =
+    { [<Option(Required = true, HelpText = "The connection to your SQL Server database.")>]
+      connectionString: string
+      [<Option(Default = "dbo", HelpText = "The name of the database table schema for which go generate the code.")>]
+      schemaName: string
+      [<Option(Required = true,
+               HelpText = "The name of the database table for which go generate the code.  The application will use the table named as '[schemaName].[tableName]'.")>]
+      tableName: string
+      [<Option(Required = true,
+               HelpText = "The output folder where the program will put the generated code.  The output file will be named '[tableName].fs'")>]
+      outputFolder: string }
 
 type SchemaColumn =
     { Name: string
       DataType: Type
       AllowNull: bool option }
 
-let getSqlSchema connectionString (tableName: string) =
+let getSqlSchema connectionString (schemaName: string) (tableName: string) =
     use cn = new SqlConnection(connectionString)
-    use cmd = new SqlCommand($"SELECT * FROM {tableName}", cn)
+    use cmd = new SqlCommand($"SELECT * FROM [{schemaName}].[{tableName}]", cn)
 
     cn.Open()
     use reader = cmd.ExecuteReader(CommandBehavior.SchemaOnly)
@@ -47,23 +63,20 @@ let mapTypeToFSharpType dataType =
     | x when x = typeof<float> -> "float"
     | x when x = typeof<decimal> -> "decimal"
     | x when x = typeof<bool> -> "bool"
-    | _ -> dataType.ToString().Replace("System.", "")
+    | _ -> dataType.ToString()
 
 let writeProperty schemaColumn (writer: TextWriter) =
     writer.Write($"{schemaColumn.Name}: {schemaColumn.DataType |> mapTypeToFSharpType}")
     writer
 
-let writeLine (writer: TextWriter) = 
+let writeLine (writer: TextWriter) =
     writer.WriteLine()
     writer
 
-let outputFSharp (schema: string) (table: string) (writer: TextWriter) =
-    let schemaColumns =
-        getSqlSchema
-            "Integrated Security=SSPI;Initial Catalog=SrgRegnskab_01;Data Source=PIN-SQL03;Trust Server Certificate=True;"
-            $"{schema}.{table}"
+let outputFSharp connectionString (schemaName: string) (tableName: string) (writer: TextWriter) =
+    let schemaColumns = getSqlSchema connectionString schemaName tableName
 
-    let schemaColumnsWithoutLastElement = schemaColumns[..schemaColumns.Length - 2]
+    let schemaColumnsWithoutLastElement = schemaColumns[.. schemaColumns.Length - 2]
 
     let writeProperties =
         schemaColumnsWithoutLastElement
@@ -73,7 +86,7 @@ let outputFSharp (schema: string) (table: string) (writer: TextWriter) =
                 >> (writeProperty schemaColumn)
                 >> writeLine
                 >> writeIndentForProperty)
-            (writeTypeOpening table)
+            (writeTypeOpening tableName)
 
     writer
     |> writeProperties
@@ -82,9 +95,20 @@ let outputFSharp (schema: string) (table: string) (writer: TextWriter) =
 
 [<EntryPoint>]
 let main args =
-    printfn "%A" args
-    use writer = new StringWriter()
-    outputFSharp "Data" "Skade" writer
-    printfn "%s" (writer.ToString())
+    let result = CommandLine.Parser.Default.ParseArguments<CommandLineOptions>(args)
 
-    0
+    match result with
+    | :? Parsed<CommandLineOptions> as parsed ->
+        use writer =
+            new StreamWriter(
+                Path.Combine(parsed.Value.outputFolder, parsed.Value.tableName)
+                + ".fs",
+                false,
+                Encoding.UTF8
+            )
+
+        outputFSharp parsed.Value.connectionString parsed.Value.schemaName parsed.Value.tableName writer
+
+        0
+    | :? NotParsed<CommandLineOptions> as notParsed -> 1
+    | _ -> 0

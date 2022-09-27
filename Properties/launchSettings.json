@@ -2,7 +2,7 @@
   "profiles": {
     "sql2types": {
       "commandName": "Project",
-      "commandLineArgs": "--output \"c:\\temp\\Test.fs\""
+      "commandLineArgs": "--connectionstring \"Integrated Security=SSPI;Initial Catalog=SrgRegnskab_01;Data Source=PIN-SQL03;Trust Server Certificate=True;\" --schemaname \"Data\" --tablename \"Skade\" --outputfolder \"c:\\temp\""
     }
   }
 }
