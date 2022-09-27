@@ -1,11 +1,9 @@
 ﻿open CommandLine
-
 open Microsoft.Data.SqlClient
 open System
 open System.Data
 open System.IO
 open System.Text
-open CommandLine.Text
 
 type CommandLineOptions =
     { [<Option(Required = true, HelpText = "The connection to your SQL Server database.")>]
@@ -67,6 +65,8 @@ let mapTypeToString dataType =
 
 let writeProperty schemaColumn (writer: TextWriter) =
     writer.Write($"{schemaColumn.Name}: {schemaColumn.DataType |> mapTypeToString}")
+    if schemaColumn.AllowNull |> Option.defaultValue false then
+        writer.Write(" option")
     writer
 
 let writeLine (writer: TextWriter) =
