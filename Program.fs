@@ -73,7 +73,7 @@ let writeLine (writer: TextWriter) =
     writer.WriteLine()
     writer
 
-let outputFSharp connectionString (schemaName: string) (tableName: string) (writer: TextWriter) =
+let outputFSharp connectionString (schemaName: string) (tableName: string) =
     let schemaColumns = getSqlSchema connectionString schemaName tableName
 
     let schemaColumnsWithoutLastElement = schemaColumns[.. schemaColumns.Length - 2]
@@ -90,11 +90,14 @@ let outputFSharp connectionString (schemaName: string) (tableName: string) (writ
                 >> writeIndentForProperty)
             (writeTypeOpening tableName)
 
+    use writer = new StringWriter()
     writer
     |> writeProperties
     // Add last property with closing curly brace.
     |> writeProperty (Array.last schemaColumns)
     |> writeTypeClosing
+
+    writer.ToString()
 
 [<EntryPoint>]
 let main args =
@@ -102,16 +105,10 @@ let main args =
 
     match result with
     | :? Parsed<CommandLineOptions> as parsed ->
-        use writer =
-            new StreamWriter(
-                Path.Combine(parsed.Value.outputFolder, parsed.Value.tableName)
-                + ".fs",
-                false,
-                Encoding.UTF8
-            )
-
-        outputFSharp parsed.Value.connectionString parsed.Value.schemaName parsed.Value.tableName writer
+        let generatedCode = outputFSharp parsed.Value.connectionString parsed.Value.schemaName parsed.Value.tableName
+        let outputFilePath = Path.Combine(parsed.Value.outputFolder, parsed.Value.tableName) + ".fs"
+        File.WriteAllText(outputFilePath, generatedCode)
 
         0
     | :? NotParsed<CommandLineOptions> as notParsed -> 1
-    | _ -> 0
+    | _ -> 1
