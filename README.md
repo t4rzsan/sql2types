@@ -9,7 +9,7 @@ There is no synchronization and there is no annoying references to Entity Framew
 ## How to install
 So far there is no cool dotnet tool or other means of installing sql2types.  Your only option is to get a copy of the code and compile it.
 
-# Usage
+## Usage
 Run sql2types from a command prompt, for example like so:
 ```cmd
 sql2types.exe --connectionstring "Integrated Security=SSPI;Initial Catalog=MyDatabase;Data Source=MySQLServer;Trust Server Certificate=True;" --schemaname "Data" --tablename "User" --outputfolder "c:\temp"
@@ -18,10 +18,9 @@ In this example, the tool will generate a record type named `User` in a file nam
 
 Currently, the tool only works for on-premise Microsoft SQL Server (i.e. not Azure).  
 
-# TODO
+## Todo
 * Add possibility for Azure SQL databases (also with MFA).
 * Add a way to run the tool for several tables in one go.
 * Publish as dotnet tool.
 * Add some tests.
 * Add C# generator for C# classes and/or records.
-* 
