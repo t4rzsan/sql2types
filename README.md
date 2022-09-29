@@ -32,7 +32,7 @@ type User =
        Email: string option
        LastSignin: System.DateTime }       
 ```
-The tool will convert basic types like `VARCHAR`, `INT`, `BIGINT` and others to F# intrinsic types.  Other types, like `DATETIME2` will show as .NET types, like `System.DateTime`.
+The tool will convert basic types like `VARCHAR`, `INT`, `BIGINT` and a few others to F# intrinsic types.  Other types, like `DATETIME2` will show as .NET types, like `System.DateTime`.  As you can see, the tool converts nullable columns to `option`.
 
 Currently, the tool only works for on-premise Microsoft SQL Server (i.e. not Azure).  
 
