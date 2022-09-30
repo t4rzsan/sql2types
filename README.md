@@ -14,7 +14,7 @@ Run sql2types from a command prompt, for example like so:
 ```cmd
 dotnet run --connectionstring "Integrated Security=SSPI;Initial Catalog=MyDatabase;Data Source=MySQLServer;Trust Server Certificate=True;" --schemaname "Data" --tablename "User" --outputfolder "c:\temp"
 ```
-For a table `Data.User` defined like this
+For a table `Data.User` defined like this:
 ```sql
 CREATE TABLE Data.User
 (
@@ -42,3 +42,4 @@ Currently, the tool only works for on-premise Microsoft SQL Server (i.e. not Azu
 * Publish as dotnet tool.
 * Add some tests.
 * Add C# generator for C# classes and/or records.
+* Prevent SQL injection in case little Bobby Tables uses the tool.
